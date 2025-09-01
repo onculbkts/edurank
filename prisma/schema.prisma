@@ -1,0 +1,49 @@
+generator client {
+provider = "prisma-client-js"
+}
+
+datasource db {
+provider = "postgresql"
+url = env("DATABASE_URL")
+}
+
+model Video {
+id Int @id @default(autoincrement())
+youtubeId String @unique
+title String
+channelTitle String
+thumbnail String
+description String
+exam String // 'YKS' or 'LGS'
+subject String
+topic String
+durationSec Int
+viewCount Int @default(0)
+likeCount Int @default(0)
+publishedAt DateTime
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+
+ratings Rating[]
+comments Comment[]
+}
+
+model Rating {
+id Int @id @default(autoincrement())
+videoId Int
+video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+stars Int
+userSessionId String
+createdAt DateTime @default(now())
+
+@@unique([videoId, userSessionId])
+}
+
+model Comment {
+id Int @id @default(autoincrement())
+videoId Int
+video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+userSessionId String
+body String
+createdAt DateTime @default(now())
+}
